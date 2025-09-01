@@ -7,15 +7,9 @@ import ExpenseForm from "../../components/ExpenseForm";
 import ExpenseList from "../../components/ExpenseList";
 import BudgetForm from "../../components/BudgetForm";
 import BudgetProgress from "../../components/BudgetProgress";
+import AddFundsForm from "../../components/AddFundsForm";
 import Layout from "../../components/Layout";
 import { useRouter } from "next/router";
-import CountUp from "react-countup";
-import {
-  CurrencyDollarIcon,
-  ChartPieIcon,
-  ClipboardListIcon,
-  TagIcon,
-} from "@heroicons/react/24/outline";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -23,6 +17,7 @@ export default function Home() {
   const { user } = useSelector((state) => state.auth);
   const { list } = useSelector((state) => state.expenses);
   const { amount: budget } = useSelector((state) => state.budget);
+  const { cash_in_hand, cash_in_bank } = useSelector((state) => state.balance);
 
   useEffect(() => {
     dispatch(checkSession());
@@ -58,40 +53,56 @@ export default function Home() {
 
   if (!user) return null;
 
+  const statCards = [
+    {
+      title: "Total Spent",
+      value: `$${totalSpent.toFixed(2)}`,
+      color: "text-blue-600",
+    },
+    {
+      title: "Remaining Budget",
+      value: `$${remainingBudget.toFixed(2)}`,
+      color: remainingBudget < 0 ? "text-red-600" : "text-green-600",
+    },
+    {
+      title: "Number of Expenses",
+      value: expenseCount,
+      color: "text-purple-600",
+    },
+    { title: "Top Category", value: topCategory, color: "text-orange-500" },
+    {
+      title: "Cash in Hand",
+      value: `$${cash_in_hand?.toFixed(2) || 0}`,
+      color: "text-yellow-600",
+    },
+    {
+      title: "Cash in Bank",
+      value: `$${cash_in_bank?.toFixed(2) || 0}`,
+      color: "text-green-600",
+    },
+  ];
+
   return (
     <Layout>
       <h1 className="text-3xl font-bold mb-6">Dashboard Overview</h1>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
-          <h2 className="text-sm font-medium text-gray-500">Total Spent</h2>
-          <p className="text-2xl font-bold text-blue-600">
-            ${totalSpent.toFixed(2)}
-          </p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
-          <h2 className="text-sm font-medium text-gray-500">
-            Remaining Budget
-          </h2>
-          <p
-            className={`text-2xl font-bold ${
-              remainingBudget < 0 ? "text-red-600" : "text-green-600"
-            }`}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        {statCards.map((card, idx) => (
+          <div
+            key={idx}
+            className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
           >
-            ${remainingBudget.toFixed(2)}
-          </p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
-          <h2 className="text-sm font-medium text-gray-500">
-            Number of Expenses
-          </h2>
-          <p className="text-2xl font-bold text-purple-600">{expenseCount}</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
-          <h2 className="text-sm font-medium text-gray-500">Top Category</h2>
-          <p className="text-2xl font-bold text-orange-500">{topCategory}</p>
-        </div>
+            <h2 className="text-sm font-medium text-gray-500">{card.title}</h2>
+            <p className={`text-2xl font-bold ${card.color}`}>{card.value}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Add Funds */}
+      <div className="bg-white p-6 rounded-lg shadow mb-6">
+        <h2 className="text-lg font-semibold mb-4">Add Funds</h2>
+        <AddFundsForm />
       </div>
 
       {/* Budget Progress */}

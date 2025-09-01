@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addExpense } from "../store/expenseSlice";
+import { deductFunds } from "../store/balanceSlice";
 
 export default function ExpenseForm() {
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("General");
+  const [source, setSource] = useState("cash_in_hand");
   const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
@@ -51,6 +53,14 @@ export default function ExpenseForm() {
         <option>Shopping</option>
         <option>Entertainment</option>
         <option>Other</option>
+      </select>
+      <select
+        value={source}
+        onChange={(e) => setSource(e.target.value)}
+        className="w-full border rounded px-3 py-2"
+      >
+        <option value="cash_in_hand">Cash in Hand</option>
+        <option value="cash_in_bank">Cash in Bank</option>
       </select>
       <button
         type="submit"
