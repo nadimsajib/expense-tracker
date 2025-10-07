@@ -5,12 +5,17 @@ import { addFunds } from "../store/balanceSlice";
 export default function AddFundsForm() {
   const [type, setType] = useState("cash_in_hand");
   const [amount, setAmount] = useState("");
+  const [month, setMonth] = useState(() => {
+    // Default to current month in YYYY-MM format
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  });
   const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!amount || amount <= 0) return;
-    dispatch(addFunds({ type, amount: parseFloat(amount) }));
+    if (!amount || amount <= 0 || !month) return;
+    dispatch(addFunds({ type, amount: parseFloat(amount), month }));
     setAmount("");
   };
 
@@ -29,6 +34,12 @@ export default function AddFundsForm() {
         placeholder="Amount"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
+        className="border rounded px-3 py-2"
+      />
+      <input
+        type="month"
+        value={month}
+        onChange={(e) => setMonth(e.target.value)}
         className="border rounded px-3 py-2"
       />
       <button

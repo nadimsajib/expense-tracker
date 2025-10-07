@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchExpenses } from "../../store/expenseSlice";
 import { checkSession, logout } from "../../store/authSlice";
 import { fetchBudget } from "../../store/budgetSlice";
+import { fetchBalance } from "../../store/balanceSlice";
 import ExpenseForm from "../../components/ExpenseForm";
 import ExpenseList from "../../components/ExpenseList";
 import BudgetForm from "../../components/BudgetForm";
@@ -18,6 +19,7 @@ export default function Home() {
   const { list } = useSelector((state) => state.expenses);
   const { amount: budget } = useSelector((state) => state.budget);
   const { cash_in_hand, cash_in_bank } = useSelector((state) => state.balance);
+  const currentMonth = new Date().toISOString().slice(0, 7);
 
   useEffect(() => {
     dispatch(checkSession());
@@ -27,13 +29,14 @@ export default function Home() {
     if (user) {
       dispatch(fetchExpenses());
       dispatch(fetchBudget());
+      dispatch(fetchBalance({ month: currentMonth })); // <-- Fetch balance for current month
     } else {
       router.push("/login");
     }
-  }, [user, dispatch, router]);
+  }, [user, dispatch, router, currentMonth]);
 
   // Stats calculations
-  const currentMonth = new Date().toISOString().slice(0, 7);
+  //const currentMonth = new Date().toISOString().slice(0, 7);
   const monthlyExpenses = list.filter((exp) =>
     exp.date.startsWith(currentMonth)
   );

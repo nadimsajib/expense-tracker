@@ -4,12 +4,13 @@ import { supabase } from "../lib/supabaseClient";
 // Fetch balance
 export const fetchBalance = createAsyncThunk(
   "balance/fetchBalance",
-  async (_, { getState }) => {
+  async ({ month }, { getState }) => {
     const userId = getState().auth.user?.id;
     const { data, error } = await supabase
       .from("balances")
       .select("*")
       .eq("user_id", userId)
+      .eq("month", month)
       .single();
     if (error && error.code !== "PGRST116") throw error;
     return data || { cash_in_hand: 0, cash_in_bank: 0 };
@@ -19,12 +20,13 @@ export const fetchBalance = createAsyncThunk(
 // Add funds
 export const addFunds = createAsyncThunk(
   "balance/addFunds",
-  async ({ type, amount }, { getState }) => {
+  async ({ type, amount, month }, { getState }) => {
     const userId = getState().auth.user?.id;
     const { data: existing } = await supabase
       .from("balances")
       .select("*")
       .eq("user_id", userId)
+      .eq("month", month)
       .single();
 
     let updateData = {};
@@ -42,12 +44,13 @@ export const addFunds = createAsyncThunk(
         .from("balances")
         .update(updateData)
         .eq("user_id", userId)
+        .eq("month", month)
         .select()
         .single();
     } else {
       res = await supabase
         .from("balances")
-        .insert([{ user_id: userId, ...updateData }])
+        .insert([{ user_id: userId, month, ...updateData }])
         .select()
         .single();
     }
@@ -59,12 +62,13 @@ export const addFunds = createAsyncThunk(
 // Deduct funds when expense is added
 export const deductFunds = createAsyncThunk(
   "balance/deductFunds",
-  async ({ type, amount }, { getState }) => {
+  async ({ type, amount, month }, { getState }) => {
     const userId = getState().auth.user?.id;
     const { data: existing } = await supabase
       .from("balances")
       .select("*")
       .eq("user_id", userId)
+      .eq("month", month)
       .single();
 
     let updateData = {};
@@ -80,6 +84,7 @@ export const deductFunds = createAsyncThunk(
       .from("balances")
       .update(updateData)
       .eq("user_id", userId)
+      .eq("month", month)
       .select()
       .single();
     if (error) throw error;
