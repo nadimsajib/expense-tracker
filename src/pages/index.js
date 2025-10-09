@@ -59,12 +59,12 @@ export default function Home() {
   const statCards = [
     {
       title: "Total Spent",
-      value: `$${totalSpent.toFixed(2)}`,
+      value: `৳${totalSpent.toFixed(2)}`,
       color: "text-blue-600",
     },
     {
       title: "Remaining Budget",
-      value: `$${remainingBudget.toFixed(2)}`,
+      value: `৳${remainingBudget.toFixed(2)}`,
       color: remainingBudget < 0 ? "text-red-600" : "text-green-600",
     },
     {
@@ -75,12 +75,12 @@ export default function Home() {
     { title: "Top Category", value: topCategory, color: "text-orange-500" },
     {
       title: "Cash in Hand",
-      value: `$${cash_in_hand?.toFixed(2) || 0}`,
+      value: `৳${cash_in_hand?.toFixed(2) || 0}`,
       color: "text-yellow-600",
     },
     {
       title: "Cash in Bank",
-      value: `$${cash_in_bank?.toFixed(2) || 0}`,
+      value: `৳${cash_in_bank?.toFixed(2) || 0}`,
       color: "text-green-600",
     },
   ];
